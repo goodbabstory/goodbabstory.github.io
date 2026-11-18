@@ -5,7 +5,6 @@ import { listPublished, loadImage, monthLabel, readUrl, el } from "./common.js?v
 import { firstImage } from "./blocks.js?v={{ site.time | date: '%s' }}";
 
 const latestBox = document.getElementById("latest");
-const listBox = document.getElementById("issue-list");
 
 function badge(post, isNew) {
   const p = el("p", "issue-badge");
@@ -17,7 +16,7 @@ function badge(post, isNew) {
 
 try {
   const posts = await listPublished();
-  latestBox.innerHTML = ""; listBox.innerHTML = "";
+  latestBox.innerHTML = "";
   if (!posts.length) {
     latestBox.append(el("p", "empty-note", "첫 번째 소식지를 준비하고 있어요. 조금만 기다려 주세요 🌸"));
   } else {
@@ -38,11 +37,6 @@ try {
       }).catch(() => {});
     }
   }
-  posts.forEach((p) => {
-    const li = el("li"); const a = el("a"); a.href = readUrl(p.id);
-    a.append(el("span", "list-date", p.id.replace("-", ".")), el("span", "list-title", p.title));
-    li.append(a); listBox.append(li);
-  });
 } catch (e) {
   console.error(e);
   latestBox.innerHTML = "";

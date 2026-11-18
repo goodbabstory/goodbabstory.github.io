@@ -1,17 +1,9 @@
 ---
 layout: default
+sidebar: true
 ---
-<section class="hero">
-  <p class="hero-kicker">{{ site.publisher }} 월간 소식지</p>
-  <h1 class="hero-title">{{ site.title }}</h1>
-  <p class="hero-desc">{{ site.description }}</p>
-</section>
 
 <div id="latest"><p class="empty-note">불러오는 중이에요…</p></div>
 
-<section class="issue-list" id="issues">
-  <h2>지난 호 모아보기</h2>
-  <ul id="issue-list"></ul>
-</section>
 
 <script type="module" src="{{ '/assets/js/home.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>

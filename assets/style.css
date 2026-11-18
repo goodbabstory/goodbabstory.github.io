@@ -522,3 +522,46 @@ body.preview-mode .editable:empty { display: none; }
 body.preview-mode .editable { background: none !important; box-shadow: none !important; }
 body.preview-mode .blk-edit { margin-top: 0; }
 .footer-logo { display: block; width: 120px; height: auto; margin: 0 auto 10px; }
+
+/* ═════════════ 왼쪽 '지난 호 모아보기' ═════════════ */
+.header-link { white-space: nowrap; }
+.page-grid { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 40px; align-items: start; }
+.page-grid > main { margin: 0; padding: 0 0 48px; max-width: 920px; width: 100%; }
+.issue-side { position: sticky; top: 20px; padding-top: 44px; max-height: calc(100vh - 40px); overflow: auto; }
+.side-toggle { display: none; }
+.side-title { font-family: var(--serif); font-weight: 700; font-size: 18px; color: var(--accent); margin: 0 0 12px; font-synthesis: none; }
+.side-list { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--line); }
+.side-list a { display: grid; gap: 1px; padding: 9px 0 9px 16px; margin-left: -1px; border-left: 2px solid transparent; text-decoration: none; color: var(--ink); }
+.side-list a:hover { color: var(--accent); }
+.side-list a.on { border-left-color: var(--accent); color: var(--accent); font-weight: 600; }
+.side-date { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.side-name { font-size: 15px; line-height: 1.4; }
+.side-empty { color: var(--muted); font-size: 14px; padding: 8px 16px; }
+
+@media (max-width: 900px) {
+  .page-grid { display: block; padding: 0; }
+  .page-grid > main { padding: 0 20px 48px; }
+  .issue-side { position: static; max-height: none; padding: 12px 20px 0; }
+  .side-toggle {
+    display: flex; width: 100%; justify-content: space-between; align-items: center; font: inherit; font-size: 15px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; color: var(--ink); cursor: pointer;
+  }
+  .side-toggle span { transition: transform .2s; }
+  .issue-side.open .side-toggle span { transform: rotate(180deg); }
+  .side-body { display: none; background: var(--card); border: 1px solid var(--line); border-top: 0; border-radius: 0 0 12px 12px; padding: 8px 14px 6px; margin-top: -6px; }
+  .issue-side.open .side-body { display: block; }
+  .side-title { display: none; }
+  .side-list { border-left: 0; max-height: 50vh; overflow: auto; }
+  .side-list li + li { border-top: 1px solid var(--line); }
+  .side-list a { grid-template-columns: 64px 1fr; align-items: baseline; padding: 10px 2px; border-left: 0; margin: 0; }
+  .side-list a.on { background: var(--accent-soft); border-radius: 8px; padding-left: 8px; }
+}
+.site-header { max-width: 1200px; }
+
+/* 맨 위 로고 막대는 항상 화면 위에 고정 */
+.site-header-wrap { position: sticky; top: 0; z-index: 15; background: #f3eeea; box-shadow: 0 1px 0 var(--line); }
+.issue-side { top: 92px; max-height: calc(100vh - 112px); }
+#latest { margin-top: 44px; }
+@media (max-width: 900px) { #latest { margin-top: 20px; } }
+.panel { top: 100px; max-height: calc(100vh - 130px); }
+@media (max-width: 1279px) { .panel { top: auto; } }

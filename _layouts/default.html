@@ -10,13 +10,28 @@
       <img src="{{ '/assets/logo-symbol.png' | relative_url }}" alt="" width="30" height="30">
       <span>{{ site.title }}</span>
     </a>
-    <a class="header-link" href="{{ '/#issues' | relative_url }}">지난 호</a>
+    <a class="header-link" id="prev-issue-link" href="{{ '/' | relative_url }}" hidden>← 지난 호</a>
   </header>
   </div>
 
+  {% if page.sidebar %}
+  <div class="page-grid">
+    <aside class="issue-side" id="issue-side">
+      <button type="button" class="side-toggle" id="side-toggle" aria-expanded="false">📚 지난 호 목록 <span>▾</span></button>
+      <div class="side-body" id="side-body">
+        <h2 class="side-title">지난 호 모아보기</h2>
+        <ul class="side-list" id="side-list"><li class="side-empty">불러오는 중…</li></ul>
+      </div>
+    </aside>
+    <main class="{{ page.main_class }}">
+      {{ content }}
+    </main>
+  </div>
+  {% else %}
   <main class="{{ page.main_class }}">
     {{ content }}
   </main>
+  {% endif %}
 
   <footer class="site-footer">
     <img class="footer-logo" src="{{ '/assets/logo-full.png' | relative_url }}" alt="{{ site.publisher }}" width="120">
@@ -26,5 +41,6 @@
     {% endif %}
     <p class="footer-admin"><a href="{{ '/admin/' | relative_url }}">관리자</a> · v{{ site.version }}</p>
   </footer>
+  <script type="module" src="{{ '/assets/js/nav.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
 </body>
 </html>
