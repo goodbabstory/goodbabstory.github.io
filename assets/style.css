@@ -472,3 +472,19 @@ body.is-dragging .blk-add { visibility: hidden; }
 .panel-sep { border: 0; border-top: 1px solid var(--line); margin: 6px 0 14px; }
 .panel-hint { font-size: 12px; color: var(--muted); margin: -4px 0 12px; }
 .blk { position: relative; }
+
+/* 선, 판 높이 손잡이, 변환 버튼 */
+.free-item.fi-line { display: flex; }
+.fi-line { flex: 1; }
+.dir-v .fi-line { border-left: 1px solid currentColor; }
+.dir-h .fi-line { border-top: 1px solid currentColor; align-self: flex-start; }
+.dir-v, .dir-h { min-width: 6px; min-height: 6px; }
+.canvas .free-item.fi-line { cursor: move; }
+.board-resize {
+  position: absolute; left: 50%; bottom: -14px; transform: translateX(-50%); z-index: 4; display: none;
+  background: var(--accent); color: #fff; font-size: 12px; padding: 3px 12px; border-radius: 999px; cursor: ns-resize;
+  touch-action: none; user-select: none; -webkit-user-select: none; box-shadow: 0 2px 6px rgba(0,0,0,.2); white-space: nowrap;
+}
+.blk-edit.selected .board-resize { display: block; }
+.convert-box { margin-bottom: 14px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+.convert-box .chip { width: 100%; }

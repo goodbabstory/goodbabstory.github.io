@@ -6,7 +6,7 @@ import {
 import { auth, db, ADMIN_DOMAIN, isAdminUser, loadImages, monthLabel, readUrl, toast, el } from "./common.js";
 import {
   BLOCKS, OPT, ITEM_OPT, ITEM_EXTRA, newBlock, newItem, renderBlock, cleanHtml, mapImages,
-  applyLayout, clampDx, positionItem,
+  applyLayout, clampDx, positionItem, SIZE_PX, BOARD_HR, boardHr, itemFont,
 } from "./blocks.js";
 
 const $ = (id) => document.getElementById(id);
@@ -335,13 +335,29 @@ function openPanel(id) {
       inp.addEventListener("input", () => { b[k] = inp.value.trim(); markDirty(); });
       inp.addEventListener("change", () => replaceBlock(b));
       g.append(inp); body.append(g);
+    } else if (k === "board") {
+      const cur = Object.entries(BOARD_HR).find(([, v]) => Math.abs(v - boardHr(b)) < 0.5)?.[0];
+      body.append(chipsGroup(o.label, o.choices, cur, (val) => { setBoardHr(b, BOARD_HR[val]); markDirty(); replaceBlock(b); openPanel(id); }));
+      body.append(slider("판 높이 (판 아래 ↕ 손잡이를 끌어도 돼요)", 15, 400, 1, Math.round(boardHr(b)), "%", (v) => {
+        setBoardHr(b, v);
+        const board = canvas.querySelector(`.blk-edit[data-id="${b.id}"] .free-board`);
+        if (board) { board.style.aspectRatio = `100 / ${v}`; board.querySelectorAll(".free-item").forEach((x) => { const it = b.items.find((i) => i.id === x.dataset.item); if (it) positionItem(x, it); }); }
+      }));
     } else {
       body.append(chipsGroup(o.label, o.choices, b[k], (val) => { b[k] = val; markDirty(); replaceBlock(b); openPanel(id); }));
     }
   });
 
+  if (CONVERTIBLE.includes(b.type)) {
+    const box = el("div", "convert-box");
+    const btn = el("button", "chip on", "🔓 안의 글·사진 따로따로 움직이기"); btn.type = "button";
+    btn.onclick = () => convertToFree(b);
+    box.append(btn, el("p", "panel-hint", "지금 모습 그대로 ‘자유 배치’로 바뀌어서, 제목·글·사진·선을 각각 원하는 곳으로 끌어 옮길 수 있어요."));
+    body.prepend(box);
+  }
+
   // 위치·너비 (모든 블록)
-  if (b.type !== "spacer") {
+  if (b.type !== "spacer" && b.type !== "free") {
     body.append(el("hr", "panel-sep"), el("div", "opt-label", "위치·너비 (블록의 ✥ 손잡이를 끌어도 돼요)"));
     const relayout = () => { const inner = innerOf(b); if (inner) applyLayout(inner, b); };
     body.append(
@@ -364,14 +380,24 @@ function freePanel(b, body) {
   const addI = el("button", "chip on", "＋ 사진"); addI.type = "button";
   addT.onclick = () => { const it = newItem("text"); b.items.push(it); selectedItem = { block: b.id, item: it.id }; markDirty(); replaceBlock(b); openPanel(b.id); };
   addI.onclick = () => { const it = newItem("image"); b.items.push(it); selectedItem = { block: b.id, item: it.id }; markDirty(); replaceBlock(b); openPanel(b.id); };
-  acts.append(addT, addI); body.append(acts);
+  const addL = el("button", "chip on", "＋ 선"); addL.type = "button";
+  addL.onclick = () => { const it = newItem("line"); b.items.push(it); selectedItem = { block: b.id, item: it.id }; markDirty(); replaceBlock(b); openPanel(b.id); };
+  acts.append(addT, addI, addL); body.append(acts);
 
   const it = selectedItem && selectedItem.block === b.id ? b.items.find((x) => x.id === selectedItem.item) : null;
   if (!it) {
     body.append(el("p", "panel-hint", "판 안의 글상자나 사진을 누르면 여기서 위치·크기·모양을 바꿀 수 있어요."), el("hr", "panel-sep"));
     return;
   }
-  body.append(el("div", "opt-label", it.kind === "text" ? "▸ 고른 글상자" : "▸ 고른 사진"));
+  body.append(el("div", "opt-label", { text: "▸ 고른 글상자", image: "▸ 고른 사진", line: "▸ 고른 선" }[it.kind]));
+  if (it.kind === "text") {
+    const fs = it.fs || SIZE_PX[it.size] || 20;
+    body.append(slider("글자 크기", 10, 120, 1, fs, "px", (v) => {
+      it.fs = v; delete it.size;
+      const t = itemEl(b, it)?.querySelector(".fi-txt");
+      if (t) { t.className = t.className.replace(/\bsz-\S+/g, ""); t.style.fontSize = itemFont(v); }
+    }));
+  }
   if (it.kind === "image") {
     const pick = el("button", "chip on", it.img ? "사진 바꾸기" : "사진 넣기"); pick.type = "button";
     pick.onclick = () => pickImage((url) => { it.img = url; markDirty(); replaceBlock(b); openPanel(b.id); });
@@ -384,10 +410,10 @@ function freePanel(b, body) {
   const repos = () => { const box = itemEl(b, it); if (box) positionItem(box, it); };
   body.append(
     slider("가로 위치", 0, 100, 0.5, it.x, "%", (v) => { it.x = clamp(v, 0, 100 - it.w); repos(); }),
-    slider("세로 위치", 0, 100, 0.5, it.y, "%", (v) => { it.y = clamp(v, 0, it.kind === "image" ? 100 - it.h : 98); repos(); }),
+    slider("세로 위치", 0, 100, 0.5, it.y, "%", (v) => { it.y = clamp(v, 0, it.kind === "text" ? 98 : 100 - it.h); repos(); }),
     slider("너비", 5, 100, 0.5, it.w, "%", (v) => { it.w = clamp(v, 5, 100 - it.x); repos(); }),
   );
-  if (it.kind === "image") body.append(slider("높이", 5, 100, 0.5, it.h, "%", (v) => { it.h = clamp(v, 5, 100 - it.y); repos(); }));
+  if (it.kind !== "text") body.append(slider("높이", 0.5, 100, 0.5, it.h, "%", (v) => { it.h = clamp(v, 0.5, 100 - it.y); repos(); }));
   const order = el("div", "panel-actions");
   const mk = (t, fn) => { const x = el("button", "chip", t); x.type = "button"; x.onclick = fn; order.append(x); };
   mk("맨 앞으로", () => { b.items.splice(b.items.indexOf(it), 1); b.items.push(it); markDirty(); replaceBlock(b); });
@@ -423,7 +449,8 @@ function guide(parent, on) {
 }
 
 function attachLayoutHandles(w, b) {
-  if (b.type === "spacer") return;
+  // 자유 배치는 안의 글·사진을 직접 옮기니까 블록 전체 손잡이는 두지 않아요 (손잡이가 겹치지 않게)
+  if (b.type === "spacer" || b.type === "free") return;
   const inner = w.querySelector(".blk-inner");
   if (!inner) return;
   const mv = el("span", "bi-move", "✥"); mv.title = "끌어서 위치 옮기기";
@@ -453,6 +480,93 @@ function attachLayoutHandles(w, b) {
   });
 }
 
+// 판 높이 바꾸기: 안의 글·사진은 제자리에 있도록 세로 비율을 다시 계산해요
+function setBoardHr(b, hr) {
+  const old = boardHr(b);
+  hr = clamp(hr, 15, 400);
+  const f = old / hr;
+  for (const it of b.items || []) {
+    it.y = round(it.y * f, 0.1);
+    if (it.h != null) it.h = round(it.h * f, 0.1);
+  }
+  b.hr = hr;
+}
+canvas.addEventListener("pointerdown", (e) => {
+  const handle = e.target.closest(".board-resize");
+  if (!handle) return;
+  const board = handle.closest(".free-board");
+  const b = blocks.find((x) => x.id === board.dataset.block);
+  if (!b) return;
+  select(b.id);
+  const width = board.getBoundingClientRect().width;
+  const start = structuredClone(b.items), hr0 = boardHr(b);
+  pointerDrag(e, (dx, dy) => {
+    b.items = structuredClone(start); b.hr = hr0;
+    setBoardHr(b, hr0 + (dy / width) * 100);
+    board.style.aspectRatio = `100 / ${b.hr}`;
+    board.querySelectorAll(".free-item").forEach((x) => { const it = b.items.find((i) => i.id === x.dataset.item); if (it) positionItem(x, it); });
+  }, () => { markDirty(); replaceBlock(b); openPanel(b.id); });
+}, true);
+
+// 일반 블록 → 자유 배치로 바꾸기 (지금 보이는 위치 그대로)
+const CONVERTIBLE = ["heading", "text", "image", "imageText", "split", "quote", "gallery"];
+const RGB = { "rgb(179, 84, 47)": "accent", "rgb(125, 114, 108)": "muted", "rgb(255, 255, 255)": "white" };
+function convertToFree(b) {
+  const w = canvas.querySelector(`.blk-edit[data-id="${b.id}"]`);
+  const sec = w?.querySelector(".blk");
+  if (!sec) return;
+  if (!confirm("이 블록을 ‘자유 배치’로 바꿀까요?\n바꾼 뒤에는 제목·글·사진을 각각 끌어서 옮길 수 있어요.")) return;
+  const sr = sec.getBoundingClientRect();
+  const B = { left: sr.left + 20, top: sr.top + (parseFloat(getComputedStyle(sec).paddingTop) || 0), width: sr.width - 40 };
+  const parts = [];
+  // 안쪽 여백을 뺀 실제 글자 영역
+  const contentRect = (node) => {
+    const r = node.getBoundingClientRect(), cs = getComputedStyle(node);
+    const pl = parseFloat(cs.paddingLeft) || 0, pr = parseFloat(cs.paddingRight) || 0, pt = parseFloat(cs.paddingTop) || 0;
+    return { left: r.left + pl, top: r.top + pt, width: r.width - pl - pr, height: r.height - pt };
+  };
+  const add = (node, make) => { const r = contentRect(node); if (r.width > 0 && r.height > 0) parts.push({ r, ...make(node, r) }); };
+  const textOf = (n) => { const d = document.createElement("div"); d.textContent = n.innerText.trim(); return d.innerHTML.replace(/\n/g, "<br>"); };
+  const textItem = (n, html) => {
+    const cs = getComputedStyle(n);
+    return {
+      kind: "text", html,
+      fs: Math.round(parseFloat(cs.fontSize) * 880 / B.width),
+      color: RGB[cs.color] || "ink",
+      align: ["center", "right"].includes(cs.textAlign) ? cs.textAlign : "left",
+      font: /Pretendard/i.test(cs.fontFamily.split(",")[0]) ? "sans" : "serif",
+      weight: Number(cs.fontWeight) >= 600 ? "700" : "400",
+    };
+  };
+  sec.querySelectorAll(".blk-title, .blk-sub, .it-title").forEach((n) => { if (n.innerText.trim()) add(n, (x) => textItem(x, textOf(x))); });
+  sec.querySelectorAll(".rich").forEach((n) => { if (n.innerText.trim()) add(n, (x) => textItem(x, cleanHtml(x.innerHTML))); });
+  sec.querySelectorAll(".blk-photo").forEach((fig, i) => {
+    const node = fig.querySelector("img, .photo-empty"); if (!node) return;
+    const val = b.type === "gallery" ? (b.imgs || [])[i] : b.img;
+    add(node, () => ({ kind: "image", img: val || "", shape: b.shape || "round" }));
+  });
+  sec.querySelectorAll(".split-body").forEach((n) => {
+    const r = n.getBoundingClientRect();
+    parts.push({ r: { left: r.left, top: r.top, width: 1, height: r.height }, kind: "line", dir: "v", lcolor: "ink" });
+  });
+  if (!parts.length) { alert("옮길 내용이 없어요. 글이나 사진을 먼저 넣어주세요."); return; }
+  const bottom = Math.max(...parts.map((p) => p.r.top + p.r.height)) - B.top;
+  const H = Math.max(bottom + 8, 60);
+  const items = parts.map(({ r, ...rest }) => {
+    const it = newItem(rest.kind, rest);
+    it.x = round(clamp(((r.left - B.left) / B.width) * 100, 0, 99), 0.1);
+    it.y = round(clamp(((r.top - B.top) / H) * 100, 0, 99), 0.1);
+    it.w = round(clamp((Math.max(r.width, 1) / B.width) * 100, 0.2, 100 - it.x), 0.1);
+    if (rest.kind !== "text") it.h = round(clamp((r.height / H) * 100, 0.5, 100 - it.y), 0.1);
+    if (rest.kind === "text") it.w = round(clamp(it.w + 1, 1, 100 - it.x), 0.1); // 줄바꿈이 달라지지 않게 살짝 여유
+    return it;
+  });
+  const nb = { id: b.id, type: "free", bg: b.bg || "none", pad: b.pad || "m", hr: round((H / B.width) * 100, 0.1), items };
+  blocks[blocks.indexOf(b)] = nb;
+  selectedItem = null; markDirty(); replaceBlock(nb); select(nb.id);
+  toast("이제 안의 글·사진을 각각 끌어서 옮길 수 있어요");
+}
+
 // 자유 배치 판 안: 누르면 고르고, ✥ 또는 사진을 끌면 이동, 모서리를 끌면 크기
 canvas.addEventListener("pointerdown", (e) => {
   const box = e.target.closest(".free-item");
@@ -467,20 +581,20 @@ canvas.addEventListener("pointerdown", (e) => {
   board.querySelectorAll(".free-item").forEach((x) => x.classList.toggle("on", x === box));
   if (!already) openPanel(b.id);
   const isResize = !!e.target.closest(".fi-resize");
-  const isMove = !!e.target.closest(".fi-move") || (it.kind === "image" && !isResize);
+  const isMove = !!e.target.closest(".fi-move") || (it.kind !== "text" && !isResize);
   if (!isMove && !isResize) return; // 글상자 안을 누르면 글 고치기
   const r = board.getBoundingClientRect();
   const s0 = { x: it.x, y: it.y, w: it.w, h: it.h };
   pointerDrag(e, (dx, dy) => {
     const px = (dx / r.width) * 100, py = (dy / r.height) * 100;
     if (isResize) {
-      it.w = clamp(round(s0.w + px), 5, 100 - it.x);
-      if (it.kind === "image") it.h = clamp(round(s0.h + py), 5, 100 - it.y);
+      it.w = clamp(round(s0.w + px), it.kind === "line" ? 0.5 : 5, 100 - it.x);
+      if (it.kind !== "text") it.h = clamp(round(s0.h + py), 0.5, 100 - it.y);
     } else {
       let nx = clamp(round(s0.x + px), 0, 100 - it.w);
       if (Math.abs(nx + it.w / 2 - 50) < 1) nx = 50 - it.w / 2; // 가운데 맞춤
       it.x = nx;
-      it.y = clamp(round(s0.y + py), 0, it.kind === "image" ? 100 - it.h : 98);
+      it.y = clamp(round(s0.y + py), 0, it.kind === "text" ? 98 : 100 - it.h);
       guide(board, Math.abs(it.x + it.w / 2 - 50) < 0.01);
     }
     positionItem(box, it);
@@ -499,7 +613,7 @@ document.addEventListener("keydown", (e) => {
   const it = selectedItem && selectedItem.block === b.id ? b.items?.find((x) => x.id === selectedItem.item) : null;
   if (it) {
     it.x = clamp(it.x + d[0] * 0.5 * big, 0, 100 - it.w);
-    it.y = clamp(it.y + d[1] * 0.5 * big, 0, it.kind === "image" ? 100 - it.h : 98);
+    it.y = clamp(it.y + d[1] * 0.5 * big, 0, it.kind === "text" ? 98 : 100 - it.h);
     const box = itemEl(b, it); if (box) positionItem(box, it);
   } else {
     b.dx = clampDx(b, (b.dx || 0) + d[0] * 0.5 * big);

@@ -24,13 +24,19 @@ export const OPT = {
 
 // 자유 배치 판 안의 글상자·사진 설정
 export const ITEM_OPT = {
-  text:  ["size", "color", "align", "font", "weight"],
+  text:  ["color", "align", "font", "weight"],
   image: ["shape"],
+  line:  ["dir", "lcolor"],
 };
 export const ITEM_EXTRA = {
   weight: { label: "굵기", choices: [["400", "보통"], ["700", "굵게"]] },
-  size:   { label: "글자 크기", choices: [["s", "작게"], ["m", "보통"], ["l", "크게"], ["xl", "아주 크게"], ["xxl", "제일 크게"]] },
+  dir:    { label: "방향", choices: [["v", "세로선"], ["h", "가로선"]] },
+  lcolor: { label: "선 색", choices: [["ink", "검정"], ["accent", "테라코타"], ["muted", "회색"]] },
 };
+// 판 너비 880px 기준 글자 크기(px)
+export const SIZE_PX = { s: 16, m: 20, l: 28, xl: 42, xxl: 62 };
+export const BOARD_HR = { "16-9": 56.25, "4-3": 75, "1-1": 100, "3-4": 133.33 };
+export const boardHr = (b) => b.hr || BOARD_HR[b.board] || 56.25;
 
 export const BLOCKS = {
   heading:   { label: "제목", desc: "큰 제목과 작은 설명", make: () => ({ text: "", sub: "", size: "l", align: "left", color: "accent", font: "serif" }), opts: ["size", "align", "color", "font"] },
@@ -46,7 +52,7 @@ export const BLOCKS = {
   free:      { label: "자유 배치", desc: "글상자·사진을 원하는 위치에 끌어다 놓기", make: () => ({
     board: "16-9",
     items: [
-      newItem("text", { x: 6, y: 34, w: 40, html: "", size: "xl", color: "accent", font: "serif", weight: "700" }),
+      newItem("text", { x: 6, y: 34, w: 40, html: "", fs: 42, color: "accent", font: "serif", weight: "700" }),
       newItem("image", { x: 56, y: 8, w: 36, h: 84, shape: "oval" }),
     ],
   }), opts: ["board"] },
@@ -54,8 +60,10 @@ export const BLOCKS = {
 
 export function newItem(kind, extra) {
   const base = kind === "text"
-    ? { x: 10, y: 10, w: 40, html: "", size: "m", color: "ink", align: "left", font: "serif", weight: "400" }
-    : { x: 30, y: 15, w: 30, h: 60, img: "", shape: "round" };
+    ? { x: 10, y: 10, w: 40, html: "", fs: 20, color: "ink", align: "left", font: "serif", weight: "400" }
+    : kind === "line"
+      ? { x: 50, y: 10, w: 2, h: 60, dir: "v", lcolor: "ink" }
+      : { x: 30, y: 15, w: 30, h: 60, img: "", shape: "round" };
   return { id: Math.random().toString(36).slice(2, 10), kind, ...base, ...(extra || {}) };
 }
 
@@ -227,19 +235,23 @@ export function renderBlock(b, images, edit) {
       inner.append(el("div", `blk-spacer h-${b.h}`));
       break;
     case "free": {
-      const board = el("div", `free-board ar-${b.board}`);
+      const board = el("div", "free-board");
+      board.style.aspectRatio = `100 / ${boardHr(b)}`;
       board.dataset.block = b.id;
       (b.items || []).forEach((it) => {
         const box = el("div", `free-item fi-${it.kind}`);
         box.dataset.item = it.id;
-        box.style.left = `${it.x}%`; box.style.top = `${it.y}%`; box.style.width = `${it.w}%`;
-        if (it.kind === "image") {
-          box.style.height = `${it.h}%`;
+        positionItem(box, it);
+        if (it.kind === "line") {
+          box.classList.add(`dir-${it.dir}`);
+          box.append(el("div", `fi-line c-${it.lcolor}`));
+        } else if (it.kind === "image") {
           const src = imgSrc(it.img, images);
           if (src) { const img = el("img", `sh-${it.shape}`); img.src = src; img.alt = ""; img.draggable = false; box.append(img); }
           else if (edit) box.append(el("div", `photo-empty sh-${it.shape}`, "📷 설정에서 사진 넣기"));
         } else {
-          const t = el("div", `rich fi-txt sz-${it.size} c-${it.color} al-${it.align} f-${it.font} w-${it.weight}`);
+          const t = el("div", `rich fi-txt ${it.fs ? "" : `sz-${it.size || "m"}`} c-${it.color} al-${it.align} f-${it.font} w-${it.weight}`);
+          if (it.fs) t.style.fontSize = itemFont(it.fs);
           t.innerHTML = cleanHtml(it.html);
           if (edit) {
             t.contentEditable = "true"; t.dataset.ph = "글을 입력하세요"; t.classList.add("editable");
@@ -256,6 +268,7 @@ export function renderBlock(b, images, edit) {
         }
         board.append(box);
       });
+      if (edit) { const br = el("span", "board-resize", "↕ 판 높이"); br.title = "끌어서 판 높이 바꾸기"; board.append(br); }
       inner.append(board);
       break;
     }
@@ -278,8 +291,10 @@ export function applyLayout(inner, b) {
 }
 export function positionItem(box, it) {
   box.style.left = `${it.x}%`; box.style.top = `${it.y}%`; box.style.width = `${it.w}%`;
-  if (it.kind === "image") box.style.height = `${it.h}%`;
+  if (it.kind === "image" || it.kind === "line") box.style.height = `${it.h}%`;
 }
+// 판 너비에 비례하는 글자 크기 (휴대폰에서도 같은 비율, 너무 작아지지는 않게)
+export const itemFont = (fs) => `max(11px, ${(fs / 8.8).toFixed(3)}cqw)`;
 
 // 블록에서 첫 번째 사진 값 (첫 화면 대표 사진용)
 export function firstImage(blocks) {
