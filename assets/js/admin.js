@@ -155,6 +155,12 @@ function wrapBlock(b) {
     x.addEventListener("click", (e) => { e.stopPropagation(); fn(); });
     tools.append(x);
   };
+  if (CONVERTIBLE.includes(b.type)) {
+    const sep = el("button", "tool-split", "🔓 따로 움직이기"); sep.type = "button";
+    sep.title = "안의 제목·글·사진을 각각 따로 옮길 수 있게 바꾸기";
+    sep.addEventListener("click", (e) => { e.stopPropagation(); convertToFree(b); });
+    tools.append(sep);
+  }
   btn("↑", "위로", () => move(b, -1));
   btn("↓", "아래로", () => move(b, 1));
   btn("⚙", "설정", () => select(b.id));
@@ -643,8 +649,10 @@ function showFormatBar(e) {
 }
 function positionBar() {
   if (!richEl || fbar.hidden) return;
+  // 글 아래쪽에 띄워요 (블록 위 검은 막대를 가리지 않게). 화면 아래가 모자라면 위쪽에.
   const r = richEl.getBoundingClientRect();
-  const top = Math.max(8, r.top - fbar.offsetHeight - 8);
+  let top = r.bottom + 8;
+  if (top + fbar.offsetHeight > window.innerHeight - 90) top = Math.max(8, r.top - fbar.offsetHeight - 8);
   fbar.style.top = `${top + window.scrollY}px`;
   fbar.style.left = `${Math.max(8, Math.min(r.left + window.scrollX, window.scrollX + document.documentElement.clientWidth - fbar.offsetWidth - 8))}px`;
 }

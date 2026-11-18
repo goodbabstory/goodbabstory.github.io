@@ -491,3 +491,5 @@ body.is-dragging .blk-add { visibility: hidden; }
 
 .version-tag { font-family: var(--sans); font-size: 13px; font-weight: 500; color: var(--muted); background: var(--line); border-radius: 999px; padding: 3px 10px; vertical-align: middle; margin-left: 8px; }
 .footer-admin { color: var(--muted); font-size: 12px; opacity: .8; }
+.blk-tools .tool-split { background: var(--accent); font-size: 13px; padding: 0 12px; margin: 0 2px; }
+.blk-tools .tool-split:hover { background: #c4643c; }
