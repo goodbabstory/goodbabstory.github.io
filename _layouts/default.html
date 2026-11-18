@@ -7,7 +7,7 @@
   <div class="site-header-wrap">
   <header class="site-header">
     <a class="brand" href="{{ '/' | relative_url }}">
-      <img src="{{ '/assets/favicon.svg' | relative_url }}" alt="" width="28" height="28">
+      <img src="{{ '/assets/logo-symbol.png' | relative_url }}" alt="" width="30" height="30">
       <span>{{ site.title }}</span>
     </a>
     <a class="header-link" href="{{ '/#issues' | relative_url }}">지난 호</a>
@@ -19,7 +19,7 @@
   </main>
 
   <footer class="site-footer">
-    <p class="footer-name">{{ site.publisher }}</p>
+    <img class="footer-logo" src="{{ '/assets/logo-full.png' | relative_url }}" alt="{{ site.publisher }}" width="120">
     <p>우리는 좋은 음식으로 더 나은 세상을 그립니다.</p>
     {% if site.kakao_channel != "" %}
     <a class="kakao-btn" href="{{ site.kakao_channel }}">카카오톡 채널 추가하기</a>

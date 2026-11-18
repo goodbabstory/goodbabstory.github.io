@@ -521,3 +521,4 @@ body.preview-mode .canvas { pointer-events: none; }
 body.preview-mode .editable:empty { display: none; }
 body.preview-mode .editable { background: none !important; box-shadow: none !important; }
 body.preview-mode .blk-edit { margin-top: 0; }
+.footer-logo { display: block; width: 120px; height: auto; margin: 0 auto 10px; }
