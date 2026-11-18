@@ -7,7 +7,7 @@ main_class: wide
 ---
 <div class="admin">
   <div class="admin-top">
-    <h1>관리자</h1>
+    <h1>관리자 <span class="version-tag" title="이 시각에 사이트에 반영된 버전이에요">v{{ site.version }} · {{ site.time | date: '%-m월 %-d일 %H:%M' }} 반영</span></h1>
     <button type="button" class="btn" id="logout" hidden>로그아웃</button>
   </div>
 
@@ -89,4 +89,4 @@ main_class: wide
 
 <input type="file" id="file-input" accept="image/*" hidden>
 
-<script type="module" src="{{ '/assets/js/admin.js' | relative_url }}"></script>
+<script type="module" src="{{ '/assets/js/admin.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>

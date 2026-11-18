@@ -1,7 +1,10 @@
+---
+# 이 줄들은 지우지 마세요: 사이트를 만들 때 버전 꼬리표를 붙여요
+---
 // 월간꽃밥 공통 기능: Firebase 연결, 글 불러오기, 본문 그리기
 import {
   initializeApp, getAuth, getFirestore, connectAuthEmulator, connectFirestoreEmulator, collection, getDocs, getDoc, doc, query, where,
-} from "../vendor/firebase.js";
+} from "../vendor/firebase.js?v={{ site.time | date: '%s' }}";
 
 const config = JSON.parse(document.getElementById("firebase-config").textContent);
 export const app = initializeApp(config);

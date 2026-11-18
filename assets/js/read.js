@@ -1,13 +1,16 @@
+---
+# 이 줄들은 지우지 마세요: 사이트를 만들 때 버전 꼬리표를 붙여요
+---
 // 소식지 읽기 화면: 본문, 좋아요, 댓글(이름+비밀번호)
 import {
   doc, getDoc, collection, query, orderBy, limit, onSnapshot, writeBatch,
   increment, serverTimestamp, signInAnonymously, onAuthStateChanged,
-} from "../vendor/firebase.js";
+} from "../vendor/firebase.js?v={{ site.time | date: '%s' }}";
 import {
   auth, db, isAdminUser, listPublished, loadImages, monthLabel, readUrl,
   toast, store, el,
-} from "./common.js";
-import { renderBlocks } from "./blocks.js";
+} from "./common.js?v={{ site.time | date: '%s' }}";
+import { renderBlocks } from "./blocks.js?v={{ site.time | date: '%s' }}";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);

@@ -488,3 +488,6 @@ body.is-dragging .blk-add { visibility: hidden; }
 .blk-edit.selected .board-resize { display: block; }
 .convert-box { margin-bottom: 14px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
 .convert-box .chip { width: 100%; }
+
+.version-tag { font-family: var(--sans); font-size: 13px; font-weight: 500; color: var(--muted); background: var(--line); border-radius: 999px; padding: 3px 10px; vertical-align: middle; margin-left: 8px; }
+.footer-admin { color: var(--muted); font-size: 12px; opacity: .8; }

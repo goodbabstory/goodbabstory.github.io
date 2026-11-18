@@ -1,6 +1,9 @@
+---
+# 이 줄들은 지우지 마세요: 사이트를 만들 때 버전 꼬리표를 붙여요
+---
 // 월간꽃밥 블록: 소식지 한 호는 여러 블록(제목, 글, 사진, 사진+글 …)을 위에서 아래로 쌓아 만들어요.
 // 읽기 화면과 관리자 편집 화면이 같은 코드로 그려져서, 편집하는 모습 그대로 사이트에 보여요.
-import { DOMPurify } from "../vendor/markdown.js";
+import { DOMPurify } from "../vendor/markdown.js?v={{ site.time | date: '%s' }}";
 
 // ── 고를 수 있는 설정들 ─────────────────────────────
 export const OPT = {

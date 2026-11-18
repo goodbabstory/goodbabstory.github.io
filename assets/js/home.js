@@ -1,5 +1,8 @@
-import { listPublished, loadImage, monthLabel, readUrl, el } from "./common.js";
-import { firstImage } from "./blocks.js";
+---
+# 이 줄들은 지우지 마세요: 사이트를 만들 때 버전 꼬리표를 붙여요
+---
+import { listPublished, loadImage, monthLabel, readUrl, el } from "./common.js?v={{ site.time | date: '%s' }}";
+import { firstImage } from "./blocks.js?v={{ site.time | date: '%s' }}";
 
 const latestBox = document.getElementById("latest");
 const listBox = document.getElementById("issue-list");

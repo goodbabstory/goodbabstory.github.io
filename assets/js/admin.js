@@ -1,13 +1,16 @@
+---
+# 이 줄들은 지우지 마세요: 사이트를 만들 때 버전 꼬리표를 붙여요
+---
 // 월간꽃밥 관리자 화면 (블록 편집기)
 import {
   signInWithEmailAndPassword, signOut, onAuthStateChanged,
   collection, getDocs, doc, getDoc, setDoc, deleteDoc, serverTimestamp,
-} from "../vendor/firebase.js";
-import { auth, db, ADMIN_DOMAIN, isAdminUser, loadImages, monthLabel, readUrl, toast, el } from "./common.js";
+} from "../vendor/firebase.js?v={{ site.time | date: '%s' }}";
+import { auth, db, ADMIN_DOMAIN, isAdminUser, loadImages, monthLabel, readUrl, toast, el } from "./common.js?v={{ site.time | date: '%s' }}";
 import {
   BLOCKS, OPT, ITEM_OPT, ITEM_EXTRA, newBlock, newItem, renderBlock, cleanHtml, mapImages,
   applyLayout, clampDx, positionItem, SIZE_PX, BOARD_HR, boardHr, itemFont,
-} from "./blocks.js";
+} from "./blocks.js?v={{ site.time | date: '%s' }}";
 
 const $ = (id) => document.getElementById(id);
 const views = { login: $("view-login"), list: $("view-list"), edit: $("view-edit") };
