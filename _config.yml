@@ -1,0 +1,46 @@
+# ─────────────────────────────────────────────
+# 월간꽃밥 사이트 기본 설정
+# ─────────────────────────────────────────────
+title: 월간꽃밥
+description: 좋은 음식으로 더 나은 세상을 그리는 꽃밥의 이야기
+publisher: "꽃, 밥에피다"
+url: https://goodbabstory.github.io
+baseurl: ""
+lang: ko
+timezone: Asia/Seoul
+
+# 카카오톡 채널 주소 (있으면 적어주세요. 예: https://pf.kakao.com/_xxxxx)
+kakao_channel: ""
+
+# 날짜가 아직 오지 않은 호도 미리 올려서 볼 수 있게
+future: true
+
+# 소식지 주소 모양: goodbabstory.github.io/2026/12/
+permalink: /:year/:month/
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: true
+
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: issue
+
+# 좋아요·댓글 저장소 (Firebase). 웹사이트에 공개되는 값이라 괜찮아요.
+firebase:
+  apiKey: "AIzaSyCEnoFArteBK0_ZYVf98UH3wuVxcpuVjSc"
+  authDomain: "goodbabstory.firebaseapp.com"
+  projectId: "goodbabstory"
+  storageBucket: "goodbabstory.firebasestorage.app"
+  messagingSenderId: "594560807319"
+  appId: "1:594560807319:web:1ebc0187dc5c1c13d154d2"
+
+exclude:
+  - README.md
+  - firestore.rules
+  - Gemfile
+  - Gemfile.lock

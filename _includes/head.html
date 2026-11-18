@@ -1,0 +1,30 @@
+{%- assign page_title = page.title | default: site.title -%}
+{%- if page.layout == 'issue' -%}
+  {%- capture full_title -%}{{ page.title }} · {{ site.title }}{%- endcapture -%}
+{%- else -%}
+  {%- capture full_title -%}{{ site.title }} · {{ site.description }}{%- endcapture -%}
+{%- endif -%}
+{%- assign desc = page.summary | default: site.description | strip_html | strip_newlines -%}
+{%- assign og_image = page.cover | default: "/assets/og.png" | absolute_url -%}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ full_title }}</title>
+<meta name="description" content="{{ desc | escape }}">
+<link rel="canonical" href="{{ page.url | absolute_url }}">
+<link rel="icon" href="{{ '/assets/favicon.svg' | relative_url }}" type="image/svg+xml">
+
+<!-- 카카오톡·SNS 링크 미리보기 -->
+<meta property="og:type" content="{% if page.layout == 'issue' %}article{% else %}website{% endif %}">
+<meta property="og:site_name" content="{{ site.title }}">
+<meta property="og:title" content="{% if page.layout == 'issue' %}{{ page.title | escape }}{% else %}{{ site.title }}{% endif %}">
+<meta property="og:description" content="{{ desc | escape }}">
+<meta property="og:image" content="{{ og_image }}">
+<meta property="og:url" content="{{ page.url | absolute_url }}">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Song+Myung&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="{{ '/assets/style.css' | relative_url }}">
