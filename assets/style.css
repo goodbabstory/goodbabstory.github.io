@@ -12,7 +12,8 @@
   /* 아임웹과 같은 조합: 영어·숫자는 Noto Serif, 한글은 고운바탕 */
   --serif: "Noto Serif", "Gowun Batang", "Nanum Myeongjo", serif;
   --brush: var(--serif);
-  --sans: "Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  /* 아임웹처럼 사이트 전체를 같은 서체로 (영어·숫자 Noto Serif + 한글 고운바탕) */
+  --sans: var(--serif);
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }

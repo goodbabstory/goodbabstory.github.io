@@ -27,7 +27,7 @@ export const OPT = {
 
 // 자유 배치 판 안의 글상자·사진 설정
 export const ITEM_OPT = {
-  text:  ["color", "align", "font", "weight"],
+  text:  ["color", "align", "weight"],
   image: ["shape"],
   line:  ["dir", "lcolor"],
 };
@@ -42,8 +42,8 @@ export const BOARD_HR = { "16-9": 56.25, "4-3": 75, "1-1": 100, "3-4": 133.33 };
 export const boardHr = (b) => b.hr || BOARD_HR[b.board] || 56.25;
 
 export const BLOCKS = {
-  heading:   { label: "제목", desc: "큰 제목과 작은 설명", make: () => ({ text: "", sub: "", size: "l", align: "left", color: "accent", font: "serif" }), opts: ["size", "align", "color", "font"] },
-  text:      { label: "글", desc: "문단 글", make: () => ({ html: "", size: "m", align: "left", font: "sans" }), opts: ["size", "align", "font"] },
+  heading:   { label: "제목", desc: "큰 제목과 작은 설명", make: () => ({ text: "", sub: "", size: "l", align: "left", color: "accent", font: "serif" }), opts: ["size", "align", "color"] },
+  text:      { label: "글", desc: "문단 글", make: () => ({ html: "", size: "m", align: "left", font: "sans" }), opts: ["size", "align"] },
   image:     { label: "사진", desc: "사진 한 장과 설명", make: () => ({ img: "", caption: "", shape: "round", width: "full", align: "center" }), opts: ["shape", "width", "align"] },
   imageText: { label: "사진 + 글", desc: "사진 옆에 글 (휴대폰에선 위아래)", make: () => ({ img: "", title: "", html: "", side: "left", shape: "oval", ratio: "2-3", valign: "center", size: "m" }), opts: ["side", "shape", "ratio", "valign", "size"] },
   split:     { label: "제목 | 글", desc: "왼쪽 큰 제목, 오른쪽 글", make: () => ({ title: "", html: "", size: "l", color: "accent" }), opts: ["size", "color"] },
