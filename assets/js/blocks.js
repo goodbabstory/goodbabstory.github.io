@@ -19,6 +19,17 @@ export const OPT = {
   bg:     { label: "배경색", choices: [["none", "없음"], ["cream", "아이보리"], ["pink", "연분홍"], ["accent", "테라코타"]] },
   pad:    { label: "위아래 여백", choices: [["s", "좁게"], ["m", "보통"], ["l", "넓게"]] },
   url:    { label: "누르면 갈 주소", input: "url", placeholder: "https://" },
+  board:  { label: "판 모양", choices: [["16-9", "가로로 길게"], ["4-3", "보통"], ["1-1", "정사각형"], ["3-4", "세로로 길게"]] },
+};
+
+// 자유 배치 판 안의 글상자·사진 설정
+export const ITEM_OPT = {
+  text:  ["size", "color", "align", "font", "weight"],
+  image: ["shape"],
+};
+export const ITEM_EXTRA = {
+  weight: { label: "굵기", choices: [["400", "보통"], ["700", "굵게"]] },
+  size:   { label: "글자 크기", choices: [["s", "작게"], ["m", "보통"], ["l", "크게"], ["xl", "아주 크게"], ["xxl", "제일 크게"]] },
 };
 
 export const BLOCKS = {
@@ -32,7 +43,21 @@ export const BLOCKS = {
   button:    { label: "버튼", desc: "신청하기·바로가기 버튼", make: () => ({ label: "", url: "", align: "center" }), opts: ["url", "align"] },
   divider:   { label: "구분선", desc: "내용 사이를 나눠요", make: () => ({ style: "flower" }), opts: ["style"] },
   spacer:    { label: "여백", desc: "빈 공간", make: () => ({ h: "m" }), opts: ["h"], noBox: true },
+  free:      { label: "자유 배치", desc: "글상자·사진을 원하는 위치에 끌어다 놓기", make: () => ({
+    board: "16-9",
+    items: [
+      newItem("text", { x: 6, y: 34, w: 40, html: "", size: "xl", color: "accent", font: "serif", weight: "700" }),
+      newItem("image", { x: 56, y: 8, w: 36, h: 84, shape: "oval" }),
+    ],
+  }), opts: ["board"] },
 };
+
+export function newItem(kind, extra) {
+  const base = kind === "text"
+    ? { x: 10, y: 10, w: 40, html: "", size: "m", color: "ink", align: "left", font: "serif", weight: "400" }
+    : { x: 30, y: 15, w: 30, h: 60, img: "", shape: "round" };
+  return { id: Math.random().toString(36).slice(2, 10), kind, ...base, ...(extra || {}) };
+}
 
 export function newBlock(type) {
   return { id: Math.random().toString(36).slice(2, 10), type, bg: "none", pad: "m", ...BLOCKS[type].make() };
@@ -87,6 +112,7 @@ export function renderBlock(b, images, edit) {
   if (!def) return sec;
   const inner = el("div", "blk-inner");
   sec.append(inner);
+  applyLayout(inner, b);
 
   const text = (tag, cls, field, ph) => {
     const e = el(tag, cls);
@@ -200,8 +226,59 @@ export function renderBlock(b, images, edit) {
     case "spacer":
       inner.append(el("div", `blk-spacer h-${b.h}`));
       break;
+    case "free": {
+      const board = el("div", `free-board ar-${b.board}`);
+      board.dataset.block = b.id;
+      (b.items || []).forEach((it) => {
+        const box = el("div", `free-item fi-${it.kind}`);
+        box.dataset.item = it.id;
+        box.style.left = `${it.x}%`; box.style.top = `${it.y}%`; box.style.width = `${it.w}%`;
+        if (it.kind === "image") {
+          box.style.height = `${it.h}%`;
+          const src = imgSrc(it.img, images);
+          if (src) { const img = el("img", `sh-${it.shape}`); img.src = src; img.alt = ""; img.draggable = false; box.append(img); }
+          else if (edit) box.append(el("div", `photo-empty sh-${it.shape}`, "📷 설정에서 사진 넣기"));
+        } else {
+          const t = el("div", `rich fi-txt sz-${it.size} c-${it.color} al-${it.align} f-${it.font} w-${it.weight}`);
+          t.innerHTML = cleanHtml(it.html);
+          if (edit) {
+            t.contentEditable = "true"; t.dataset.ph = "글을 입력하세요"; t.classList.add("editable");
+            t.addEventListener("input", () => { it.html = t.innerHTML; edit.changed(); });
+            t.addEventListener("focus", () => edit.richFocus(t));
+            t.addEventListener("paste", plainPaste);
+          }
+          box.append(t);
+        }
+        if (edit) {
+          const mv = el("span", "fi-move", "✥"); mv.title = "끌어서 옮기기";
+          const rs = el("span", "fi-resize"); rs.title = "끌어서 크기 바꾸기";
+          box.append(mv, rs);
+        }
+        board.append(box);
+      });
+      inner.append(board);
+      break;
+    }
   }
   return sec;
+}
+
+// 블록 위치·너비 (모든 블록 공통)
+// w: 너비 % (25~100), dx: 가로 위치 % (가운데 기준), dy: 위쪽 간격 px
+export const clampDx = (b, v) => {
+  const lim = (100 - (b.w || 100)) / 2;
+  return Math.max(-lim, Math.min(lim, v));
+};
+export function applyLayout(inner, b) {
+  const w = b.w || 100, dx = clampDx(b, b.dx || 0), dy = b.dy || 0;
+  inner.style.setProperty("--w", `${w}%`);
+  inner.style.setProperty("--dx", `${dx}%`);
+  inner.style.setProperty("--dy", `${dy}px`);
+  inner.classList.toggle("moved", w !== 100 || dx !== 0 || dy !== 0);
+}
+export function positionItem(box, it) {
+  box.style.left = `${it.x}%`; box.style.top = `${it.y}%`; box.style.width = `${it.w}%`;
+  if (it.kind === "image") box.style.height = `${it.h}%`;
 }
 
 // 블록에서 첫 번째 사진 값 (첫 화면 대표 사진용)
@@ -209,6 +286,7 @@ export function firstImage(blocks) {
   for (const b of blocks || []) {
     if (b.img) return b.img;
     if (b.imgs) { const v = b.imgs.find(Boolean); if (v) return v; }
+    if (b.items) { const it = b.items.find((x) => x.img); if (it) return it.img; }
   }
   return "";
 }
@@ -218,6 +296,7 @@ export async function mapImages(blocks, fn) {
   for (const b of blocks) {
     if (typeof b.img === "string" && b.img) b.img = await fn(b.img);
     if (Array.isArray(b.imgs)) for (let i = 0; i < b.imgs.length; i++) if (b.imgs[i]) b.imgs[i] = await fn(b.imgs[i]);
+    if (Array.isArray(b.items)) for (const it of b.items) if (it.img) it.img = await fn(it.img);
   }
   return blocks;
 }
