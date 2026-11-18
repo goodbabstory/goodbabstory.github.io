@@ -9,8 +9,9 @@
   --accent-soft: #f6e9e2;
   --leaf: #b3542f;
   --leaf-soft: #f3e6df;
-  --serif: "Gowun Batang", "Nanum Myeongjo", serif;
-  --brush: "Gowun Batang", "Nanum Myeongjo", serif;
+  /* 아임웹과 같은 조합: 영어·숫자는 Noto Serif, 한글은 고운바탕 */
+  --serif: "Noto Serif", "Gowun Batang", "Nanum Myeongjo", serif;
+  --brush: var(--serif);
   --sans: "Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
 }
 * { box-sizing: border-box; }
@@ -30,13 +31,13 @@ img { max-width: 100%; height: auto; }
   max-width: 680px; margin: 0 auto; padding: 16px 20px;
   display: flex; align-items: center; justify-content: space-between;
 }
-.brand { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--accent); font-family: var(--brush); font-size: 22px; }
+.brand { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--accent); font-family: var(--brush); font-weight: 700; font-size: 22px; }
 .header-link { color: var(--ink); text-decoration: none; font-size: 16px; font-family: var(--serif); }
 
 /* 첫 화면 */
 .hero { text-align: left; padding: 44px 0 32px; }
 .hero-kicker { margin: 0; color: var(--muted); font-size: 14px; font-weight: 600; letter-spacing: .02em; }
-.hero-title { margin: 6px 0 6px; font-family: var(--brush); font-weight: 400; font-size: 52px; line-height: 1.2; color: var(--accent); }
+.hero-title { margin: 6px 0 6px; font-family: var(--brush); font-weight: 700; font-size: 52px; line-height: 1.2; color: var(--accent); }
 .hero-desc { margin: 0; color: var(--muted); }
 
 .latest-card {
@@ -47,7 +48,7 @@ img { max-width: 100%; height: auto; }
 .latest-card:hover { transform: translateY(-2px); }
 .latest-card img { display: block; width: 100%; aspect-ratio: 16/9; object-fit: cover; }
 .latest-body { padding: 22px 24px 24px; }
-.latest-body h2 { margin: 8px 0 6px; font-family: var(--brush); font-weight: 400; font-size: 28px; line-height: 1.4; color: var(--accent); }
+.latest-body h2 { margin: 8px 0 6px; font-family: var(--brush); font-weight: 700; font-size: 28px; line-height: 1.4; color: var(--accent); }
 .latest-body p { margin: 0; color: var(--muted); }
 .read-more { display: inline-block; margin-top: 14px; color: var(--accent); font-weight: 600; }
 
@@ -67,7 +68,7 @@ img { max-width: 100%; height: auto; }
 
 /* 소식지 본문 */
 .issue-head { padding: 28px 0 8px; }
-.issue-head h1 { margin: 12px 0 8px; font-family: var(--brush); font-weight: 400; font-size: 34px; line-height: 1.4; color: var(--accent); }
+.issue-head h1 { margin: 12px 0 8px; font-family: var(--brush); font-weight: 700; font-size: 34px; line-height: 1.4; color: var(--accent); }
 .issue-summary { margin: 0; color: var(--muted); }
 .issue-cover { margin: 20px 0 0; }
 .issue-cover img { display: block; width: 100%; border-radius: 16px; }
@@ -182,7 +183,7 @@ img { max-width: 100%; height: auto; }
 /* ── 관리자 ── */
 .admin { padding-top: 12px; }
 .admin-top { display: flex; align-items: center; justify-content: space-between; }
-.admin-top h1 { font-family: var(--serif); color: var(--accent); font-weight: 400; font-size: 28px; margin: 12px 0; }
+.admin-top h1 { font-family: var(--serif); color: var(--accent); font-weight: 700; font-size: 28px; margin: 12px 0; }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
 .login { display: grid; gap: 12px; max-width: 360px; margin: 24px auto; }
 .admin label { display: grid; gap: 4px; font-size: 14px; color: var(--muted); }
@@ -244,7 +245,7 @@ main.wide { max-width: 920px; }
 .c-ink { color: var(--ink); } .c-accent { color: var(--accent); } .c-muted { color: var(--muted); } .c-white { color: #fff; }
 .f-serif { font-family: var(--serif); } .f-sans { font-family: var(--sans); }
 
-.blk-title { margin: 0; font-weight: 400; line-height: 1.35; white-space: pre-line; }
+.blk-title { margin: 0; font-weight: 700; line-height: 1.35; white-space: pre-line; }
 .blk-title.sz-s { font-size: 21px; } .blk-title.sz-m { font-size: 27px; }
 .blk-title.sz-l { font-size: 36px; } .blk-title.sz-xl { font-size: 50px; line-height: 1.2; }
 .blk-sub { margin: 8px 0 0; color: var(--muted); }
@@ -284,11 +285,11 @@ main.wide { max-width: 920px; }
 .it-grid.ratio-2-3 { grid-template-columns: 2fr 3fr; }
 .it-grid.ratio-3-2 { grid-template-columns: 3fr 2fr; }
 .it-grid.side-right > .blk-photo { order: 2; }
-.it-title { margin: 0 0 10px; font-family: var(--serif); font-size: 21px; line-height: 1.4; color: var(--ink); }
+.it-title { margin: 0 0 10px; font-family: var(--serif); font-weight: 700; font-size: 21px; line-height: 1.4; color: var(--ink); }
 
 /* 제목 | 글 */
 .split-grid { display: grid; grid-template-columns: 1fr 1.7fr; gap: 36px; align-items: start; }
-.split-body { border-left: 1px solid var(--ink); padding-left: 36px; }
+.split-body { border-left: 1px solid var(--ink); padding-left: 36px; font-weight: 700; }
 
 /* 인용 */
 .blk-quote { margin: 0; padding: 20px 24px; background: var(--accent-soft); border-radius: 14px; font-family: var(--serif); }
@@ -392,7 +393,7 @@ body.editing .site-footer { display: none; }
 .picker-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .pick-item { font: inherit; text-align: left; display: grid; gap: 2px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); cursor: pointer; }
 .pick-item:hover { border-color: var(--accent); }
-.pick-item b { color: var(--accent); font-family: var(--serif); font-size: 17px; font-weight: 400; }
+.pick-item b { color: var(--accent); font-family: var(--serif); font-size: 17px; font-weight: 700; }
 .pick-item small { color: var(--muted); font-size: 13px; }
 
 /* 글 서식 도구 */
@@ -406,4 +407,9 @@ body.editing .site-footer { display: none; }
 .format-bar .dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; border: 2px solid #fff; vertical-align: middle; }
 @media (min-width: 1280px) {
   body.editing main.wide { max-width: 1240px; padding-right: 320px; }
+}
+
+/* 아임웹처럼 제목은 한글만 굵게(고운바탕 Bold), 영어·숫자는 보통 굵기(Noto Serif) */
+.brand, .hero-title, .issue-head h1, .latest-body h2, .blk-title, .it-title, .split-body, .admin-top h1, .pick-item b {
+  font-synthesis: none;
 }
