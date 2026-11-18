@@ -1,41 +1,17 @@
 ---
 layout: default
 ---
-{%- assign latest = site.posts.first -%}
 <section class="hero">
   <p class="hero-kicker">{{ site.publisher }} 월간 소식지</p>
   <h1 class="hero-title">{{ site.title }}</h1>
   <p class="hero-desc">{{ site.description }}</p>
 </section>
 
-{% if latest %}
-<a class="latest-card" href="{{ latest.url | relative_url }}">
-  {% if latest.cover %}
-  <img src="{{ latest.cover | relative_url }}" alt="">
-  {% endif %}
-  <div class="latest-body">
-    <p class="issue-badge">
-      <span class="new">이번 호</span>
-      {% if latest.issue %}<span>제{{ latest.issue }}호</span>{% endif %}
-      <span>{{ latest.date | date: "%Y년 %-m월" }}</span>
-    </p>
-    <h2>{{ latest.title }}</h2>
-    {% if latest.summary %}<p>{{ latest.summary }}</p>{% endif %}
-    <span class="read-more">읽으러 가기 →</span>
-  </div>
-</a>
-{% endif %}
+<div id="latest"><p class="empty-note">불러오는 중이에요…</p></div>
 
 <section class="issue-list" id="issues">
   <h2>지난 호 모아보기</h2>
-  <ul>
-    {% for post in site.posts %}
-    <li>
-      <a href="{{ post.url | relative_url }}">
-        <span class="list-date">{{ post.date | date: "%Y.%m" }}</span>
-        <span class="list-title">{{ post.title }}</span>
-      </a>
-    </li>
-    {% endfor %}
-  </ul>
+  <ul id="issue-list"></ul>
 </section>
+
+<script type="module" src="{{ '/assets/js/home.js' | relative_url }}"></script>

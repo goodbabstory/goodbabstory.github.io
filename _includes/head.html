@@ -1,5 +1,5 @@
 {%- assign page_title = page.title | default: site.title -%}
-{%- if page.layout == 'issue' -%}
+{%- if page.title -%}
   {%- capture full_title -%}{{ page.title }} · {{ site.title }}{%- endcapture -%}
 {%- else -%}
   {%- capture full_title -%}{{ site.title }} · {{ site.description }}{%- endcapture -%}
@@ -11,12 +11,13 @@
 <title>{{ full_title }}</title>
 <meta name="description" content="{{ desc | escape }}">
 <link rel="canonical" href="{{ page.url | absolute_url }}">
+{% if page.noindex %}<meta name="robots" content="noindex">{% endif %}
 <link rel="icon" href="{{ '/assets/favicon.svg' | relative_url }}" type="image/svg+xml">
 
 <!-- 카카오톡·SNS 링크 미리보기 -->
-<meta property="og:type" content="{% if page.layout == 'issue' %}article{% else %}website{% endif %}">
+<meta property="og:type" content="website">
 <meta property="og:site_name" content="{{ site.title }}">
-<meta property="og:title" content="{% if page.layout == 'issue' %}{{ page.title | escape }}{% else %}{{ site.title }}{% endif %}">
+<meta property="og:title" content="{{ site.title }}">
 <meta property="og:description" content="{{ desc | escape }}">
 <meta property="og:image" content="{{ og_image }}">
 <meta property="og:url" content="{{ page.url | absolute_url }}">
@@ -28,3 +29,5 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="{{ '/assets/style.css' | relative_url }}">
+<script>window.SITE_BASE = "{{ site.baseurl }}";</script>
+<script type="application/json" id="firebase-config">{{ site.firebase | jsonify }}</script>
