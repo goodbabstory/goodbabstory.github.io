@@ -493,3 +493,31 @@ body.is-dragging .blk-add { visibility: hidden; }
 .footer-admin { color: var(--muted); font-size: 12px; opacity: .8; }
 .blk-tools .tool-split { background: var(--accent); font-size: 13px; padding: 0 12px; margin: 0 2px; }
 .blk-tools .tool-split:hover { background: #c4643c; }
+
+/* ＋ 버튼은 블록 사이에 마우스를 올렸을 때만 */
+.blk-add { height: 22px; }
+.blk-add button { opacity: 0; }
+.blk-add:hover button, .blk-add button:focus-visible { opacity: 1; }
+.canvas > .blk-add:last-child { height: 56px; }
+.canvas > .blk-add:last-child button { opacity: 1; }
+@media (hover: none) { .blk-add button { opacity: .3; width: 24px; height: 24px; font-size: 14px; } }
+
+/* 자유 배치 점선은 그 블록을 골랐을 때만 */
+.canvas .free-item, .canvas .free-board { outline: none; }
+.canvas .blk-edit.selected .free-item { outline: 1px dashed rgba(125, 114, 108, .35); }
+.canvas .blk-edit.selected .free-board { outline: 1px solid var(--line); }
+.canvas .blk-edit.selected .free-item.on { outline: 2px solid var(--accent); }
+.blk-edit.selected .blk-inner { outline-color: rgba(179, 84, 47, .3); }
+.canvas .free-item .fi-move, .canvas .free-item .fi-resize { display: none; }
+.canvas .blk-edit.selected .free-item.on .fi-move, .canvas .blk-edit.selected .free-item.on .fi-resize { display: flex; }
+
+/* 👁 완성 모습 보기: 편집용 표시를 모두 숨겨요 */
+body.preview-mode .blk-add, body.preview-mode .blk-tools, body.preview-mode .bi-move, body.preview-mode .bi-resize,
+body.preview-mode .fi-move, body.preview-mode .fi-resize, body.preview-mode .board-resize, body.preview-mode .photo-change,
+body.preview-mode .gallery-edit, body.preview-mode .edit-hint, body.preview-mode .edit-guide, body.preview-mode .photo-empty,
+body.preview-mode .center-guide, body.preview-mode .panel, body.preview-mode .format-bar { display: none !important; }
+body.preview-mode .blk-edit, body.preview-mode .blk-inner, body.preview-mode .free-item, body.preview-mode .free-board { outline: none !important; }
+body.preview-mode .canvas { pointer-events: none; }
+body.preview-mode .editable:empty { display: none; }
+body.preview-mode .editable { background: none !important; box-shadow: none !important; }
+body.preview-mode .blk-edit { margin-top: 0; }

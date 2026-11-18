@@ -3,7 +3,7 @@
 # ─────────────────────────────────────────────
 title: 월간꽃밥
 # 사이트 버전 (고칠 때마다 올려요). 관리자 화면과 사이트 맨 아래에 보여요.
-version: "1.7"
+version: "1.8"
 description: 좋은 음식으로 더 나은 세상을 그리는 꽃밥의 이야기
 publisher: "꽃, 밥에피다"
 url: https://goodbabstory.github.io

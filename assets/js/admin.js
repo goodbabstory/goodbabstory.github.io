@@ -710,10 +710,20 @@ async function hashId(text) {
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("").slice(0, 20);
 }
 
+// ── 완성 모습 보기 (편집용 표시를 모두 숨기기) ───────────
+function setPreview(on) {
+  document.body.classList.toggle("preview-mode", on);
+  $("toggle-preview").textContent = on ? "✏️ 다시 편집하기" : "👁 완성 모습 보기";
+  $("toggle-preview").classList.toggle("primary", on);
+  if (on) { closePanel(); fbar.hidden = true; document.activeElement?.blur?.(); }
+  else if (selectedId) openPanel(selectedId);
+}
+$("toggle-preview").addEventListener("click", () => setPreview(!document.body.classList.contains("preview-mode")));
+
 // ── 저장 / 삭제 ─────────────────────────────────
 $("back-to-list").addEventListener("click", () => {
   if (dirty && !confirm("저장하지 않은 내용이 있어요. 목록으로 갈까요?")) return;
-  dirty = false; closePanel(); fbar.hidden = true; showList();
+  dirty = false; closePanel(); fbar.hidden = true; setPreview(false); showList();
 });
 window.addEventListener("beforeunload", (e) => { if (dirty) { e.preventDefault(); e.returnValue = ""; } });
 
