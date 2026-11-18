@@ -10,7 +10,7 @@
   --leaf: #b3542f;
   --leaf-soft: #f3e6df;
   --serif: "Gowun Batang", "Nanum Myeongjo", serif;
-  --brush: "Song Myung", "Gowun Batang", serif;
+  --brush: "Gowun Batang", "Nanum Myeongjo", serif;
   --sans: "Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
 }
 * { box-sizing: border-box; }
@@ -30,7 +30,7 @@ img { max-width: 100%; height: auto; }
   display: flex; align-items: center; justify-content: space-between;
 }
 .brand { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--accent); font-family: var(--brush); font-size: 22px; }
-.header-link { color: var(--muted); text-decoration: none; font-size: 15px; }
+.header-link { color: var(--ink); text-decoration: none; font-size: 16px; font-family: var(--serif); }
 
 /* 첫 화면 */
 .hero { text-align: left; padding: 44px 0 32px; }
