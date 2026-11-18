@@ -1,4 +1,5 @@
-import { listPublished, loadImage, firstImageId, monthLabel, readUrl, el } from "./common.js";
+import { listPublished, loadImage, monthLabel, readUrl, el } from "./common.js";
+import { firstImage } from "./blocks.js";
 
 const latestBox = document.getElementById("latest");
 const listBox = document.getElementById("issue-list");
@@ -25,9 +26,9 @@ try {
     body.append(el("span", "read-more", "읽으러 가기 →"));
     card.append(body);
     latestBox.append(card);
-    const coverId = firstImageId(latest.body);
-    if (coverId) {
-      loadImage(latest.id, coverId).then((src) => {
+    const cover = firstImage(latest.blocks);
+    if (cover.startsWith("fsimg:")) {
+      loadImage(latest.id, cover.slice(6)).then((src) => {
         if (!src) return;
         const img = el("img"); img.src = src; img.alt = "";
         card.prepend(img);

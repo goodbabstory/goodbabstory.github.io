@@ -4,9 +4,10 @@ import {
   increment, serverTimestamp, signInAnonymously, onAuthStateChanged,
 } from "../vendor/firebase.js";
 import {
-  auth, db, isAdminUser, listPublished, loadImages, renderBody, monthLabel, readUrl,
+  auth, db, isAdminUser, listPublished, loadImages, monthLabel, readUrl,
   toast, store, el,
 } from "./common.js";
+import { renderBlocks } from "./blocks.js";
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -34,11 +35,11 @@ async function loadIssue() {
   $("issue-title").textContent = post.title;
   $("issue-summary").textContent = post.summary || "";
 
+  const body = $("issue-body");
+  body.replaceChildren(...renderBlocks(post.blocks, {}));
   let images = {};
-  const prose = $("issue-body");
-  prose.innerHTML = renderBody(post.body, {});
   try { images = await loadImages(issueId); } catch (e) { /* 사진 없이 표시 */ }
-  if (Object.keys(images).length) prose.innerHTML = renderBody(post.body, images);
+  if (Object.keys(images).length) body.replaceChildren(...renderBlocks(post.blocks, images));
 
   // 이전/다음 호
   const i = published.findIndex((p) => p.id === issueId);
@@ -55,7 +56,7 @@ async function loadIssue() {
 function notFound() {
   $("issue-title").textContent = "소식지를 찾을 수 없어요";
   $("issue-summary").textContent = "주소를 다시 확인해 주세요.";
-  $("issue-body").innerHTML = `<p><a href="${window.SITE_BASE || ""}/">첫 화면으로 가기 →</a></p>`;
+  $("issue-body").innerHTML = `<p class="center"><a href="${window.SITE_BASE || ""}/">첫 화면으로 가기 →</a></p>`;
 }
 
 // ── 비밀번호 (댓글마다 따로 암호화해서 저장) ──────────

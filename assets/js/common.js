@@ -2,7 +2,6 @@
 import {
   initializeApp, getAuth, getFirestore, connectAuthEmulator, connectFirestoreEmulator, collection, getDocs, getDoc, doc, query, where,
 } from "../vendor/firebase.js";
-import { marked, DOMPurify } from "../vendor/markdown.js";
 
 const config = JSON.parse(document.getElementById("firebase-config").textContent);
 export const app = initializeApp(config);
@@ -46,17 +45,6 @@ export async function loadImages(id) {
 export async function loadImage(id, imgId) {
   const snap = await getDoc(doc(db, "posts", id, "images", imgId));
   return snap.exists() ? snap.data().data : null;
-}
-
-export const firstImageId = (body) => {
-  const m = /\(fsimg:([a-z0-9]+)\)/.exec(body || "");
-  return m ? m[1] : null;
-};
-
-export function renderBody(md, images) {
-  const src = String(md || "").replace(/fsimg:([a-z0-9]+)/g, (_, k) => images[k] || "");
-  const html = marked.parse(src, { breaks: true, gfm: true });
-  return DOMPurify.sanitize(html);
 }
 
 export function toast(text) {

@@ -3,9 +3,8 @@ layout: default
 permalink: /admin/
 noindex: true
 title: 관리자
+main_class: wide
 ---
-<link rel="stylesheet" href="{{ '/assets/vendor/editor.css' | relative_url }}">
-
 <div class="admin">
   <div class="admin-top">
     <h1>관리자</h1>
@@ -41,7 +40,10 @@ title: 관리자
       </div>
       <label>한 줄 소개 <input id="f-summary" type="text" maxlength="120" placeholder="첫 화면 카드에 보이는 짧은 소개"></label>
     </div>
-    <div id="editor"></div>
+
+    <p class="muted small edit-guide">✏️ 글자를 눌러 바로 고치고, 사진을 눌러 바꿀 수 있어요. 블록을 누르면 <b>⚙ 설정</b>에서 크기·모양·색을 고를 수 있어요.</p>
+    <div class="canvas blocks" id="canvas"></div>
+
     <div class="save-bar">
       <label class="switch"><input id="f-published" type="checkbox"> 사이트에 공개</label>
       <span class="muted small" id="edit-status"></span>
@@ -53,5 +55,38 @@ title: 관리자
     <p class="danger-zone"><button type="button" class="link-danger" id="delete-post">이 호 삭제하기</button></p>
   </section>
 </div>
+
+<!-- 블록 설정 -->
+<aside class="panel" id="panel" hidden>
+  <div class="panel-head"><b id="panel-title"></b><button type="button" class="btn" id="panel-close">닫기</button></div>
+  <div id="panel-body"></div>
+</aside>
+
+<!-- 블록 고르기 -->
+<dialog class="picker" id="picker">
+  <div class="panel-head"><b>어떤 블록을 넣을까요?</b><button type="button" class="btn" id="picker-close">닫기</button></div>
+  <div class="picker-list" id="picker-list"></div>
+</dialog>
+
+<!-- 글 서식 -->
+<div class="format-bar" id="format-bar" hidden>
+  <button type="button" data-cmd="bold" title="굵게"><b>B</b></button>
+  <button type="button" data-cmd="italic" title="기울임"><i>I</i></button>
+  <button type="button" data-cmd="underline" title="밑줄"><u>U</u></button>
+  <span class="sep"></span>
+  <button type="button" data-cmd="fontSize" data-val="2" title="작은 글자">가<small>-</small></button>
+  <button type="button" data-cmd="fontSize" data-val="3" title="보통 글자">가</button>
+  <button type="button" data-cmd="fontSize" data-val="5" title="큰 글자">가<small>+</small></button>
+  <span class="sep"></span>
+  <button type="button" data-cmd="foreColor" data-val="#2b2725" title="검정"><span class="dot" style="background:#2b2725"></span></button>
+  <button type="button" data-cmd="foreColor" data-val="#b3542f" title="테라코타"><span class="dot" style="background:#b3542f"></span></button>
+  <button type="button" data-cmd="foreColor" data-val="#7d726c" title="회색"><span class="dot" style="background:#7d726c"></span></button>
+  <span class="sep"></span>
+  <button type="button" data-cmd="insertUnorderedList" title="목록">• 목록</button>
+  <button type="button" data-cmd="createLink" title="링크">🔗</button>
+  <button type="button" data-cmd="removeFormat" title="서식 지우기">지우기</button>
+</div>
+
+<input type="file" id="file-input" accept="image/*" hidden>
 
 <script type="module" src="{{ '/assets/js/admin.js' | relative_url }}"></script>

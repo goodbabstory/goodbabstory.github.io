@@ -22,7 +22,7 @@ service cloud.firestore {
     match /posts/{id} {
       allow read: if isAdmin() || resource.data.published == true;
       allow create, update: if isAdmin() && validId(id)
-        && request.resource.data.keys().hasOnly(['no', 'title', 'summary', 'body', 'published', 'updatedAt']);
+        && request.resource.data.keys().hasOnly(['no', 'title', 'summary', 'body', 'blocks', 'published', 'updatedAt']);
       allow delete: if isAdmin();
 
       // 글 속 사진
